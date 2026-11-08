@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 620" width="1280" height="620" font-family="Libre Franklin, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#31521B"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="620" fill="#F4F7EE"/>
+
+  <text x="40" y="54" font-size="26" font-weight="800" fill="#15200E">ETL automation: from Qualtrics to Power BI</text>
+  <text x="40" y="84" font-size="15" fill="#56634C">A scheduled pipeline that replaces manual extraction. No extra licenses: Python, Windows Task Scheduler and OneDrive.</text>
+
+  <g font-size="13" fill="#15200E">
+    <!-- 1 Source -->
+    <rect x="40" y="130" width="200" height="200" rx="14" fill="#FFFFFF" stroke="#31521B" stroke-width="2"/>
+    <text x="60" y="160" font-size="11" font-weight="700" fill="#56634C" letter-spacing="1.5">1. SOURCE</text>
+    <text x="60" y="188" font-size="19" font-weight="800">Qualtrics</text>
+    <text x="60" y="214">Institutional surveys</text>
+    <text x="60" y="236">REST API v3</text>
+    <rect x="60" y="262" width="160" height="44" rx="8" fill="#E6F1CF"/>
+    <text x="72" y="280" font-size="11.5">Export, check status</text>
+    <text x="72" y="296" font-size="11.5">and download the ZIP</text>
+
+    <!-- 2 Python -->
+    <rect x="300" y="130" width="300" height="200" rx="14" fill="#31521B"/>
+    <text x="320" y="160" font-size="11" font-weight="700" fill="#C9E39A" letter-spacing="1.5">2. EXTRACT AND CLEAN</text>
+    <text x="320" y="188" font-size="19" font-weight="800" fill="#FFFFFF">qualtrics_etl.py</text>
+    <g fill="#F4F7EE" font-size="12.5">
+      <text x="320" y="216">Python + pandas + requests</text>
+      <text x="320" y="246">- Removes metadata rows</text>
+      <text x="320" y="268">- Filters periods and columns</text>
+      <text x="320" y="290">- Validates configuration and credentials</text>
+      <text x="320" y="312">- Logs every run</text>
+    </g>
+
+    <!-- 3 Load -->
+    <rect x="660" y="130" width="250" height="200" rx="14" fill="#FFFFFF" stroke="#31521B" stroke-width="2"/>
+    <text x="680" y="160" font-size="11" font-weight="700" fill="#56634C" letter-spacing="1.5">3. LOAD</text>
+    <text x="680" y="188" font-size="19" font-weight="800">CSV on OneDrive</text>
+    <text x="680" y="214">One file per survey</text>
+    <text x="680" y="236">and period</text>
+    <rect x="680" y="262" width="210" height="44" rx="8" fill="#E6F1CF"/>
+    <text x="692" y="280" font-size="11.5">Safe write: a half-written</text>
+    <text x="692" y="296" font-size="11.5">file is never published</text>
+
+    <!-- 4 Power BI -->
+    <rect x="970" y="130" width="270" height="200" rx="14" fill="#99CB38"/>
+    <text x="990" y="160" font-size="11" font-weight="700" fill="#2A3D17" letter-spacing="1.5">4. VISUALIZATION</text>
+    <text x="990" y="188" font-size="19" font-weight="800">Power BI</text>
+    <text x="990" y="214">Scheduled refresh</text>
+    <g font-size="12.5">
+      <text x="990" y="246">- Participation by campus</text>
+      <text x="990" y="268">- Progress by period</text>
+      <text x="990" y="290">- Historical metrics</text>
+    </g>
+  </g>
+
+  <g stroke="#31521B" stroke-width="2.5" fill="none" marker-end="url(#arrow)">
+    <path d="M240 230 L296 230"/>
+    <path d="M600 230 L656 230"/>
+    <path d="M910 230 L966 230"/>
+  </g>
+
+  <!-- orchestration -->
+  <rect x="300" y="420" width="610" height="120" rx="14" fill="#FFFFFF" stroke="#99CB38" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="320" y="450" font-size="11" font-weight="700" fill="#56634C" letter-spacing="1.5">ORCHESTRATION</text>
+  <text x="320" y="478" font-size="17" font-weight="800" fill="#15200E">Windows Task Scheduler</text>
+  <text x="320" y="504" font-size="13" fill="#15200E">Runs a .bat file on the chosen schedule. The .bat goes through every survey</text>
+  <text x="320" y="524" font-size="13" fill="#15200E">configuration in surveys/*.json, so adding a survey requires no code changes.</text>
+  <path d="M450 420 L450 334" stroke="#31521B" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- credentials -->
+  <rect x="40" y="420" width="200" height="120" rx="14" fill="#E6F1CF"/>
+  <text x="60" y="450" font-size="11" font-weight="700" fill="#56634C" letter-spacing="1.5">CREDENTIALS</text>
+  <text x="60" y="476" font-size="13" fill="#15200E">Token and data center</text>
+  <text x="60" y="496" font-size="13" fill="#15200E">in a local .env file,</text>
+  <text x="60" y="516" font-size="13" fill="#15200E">outside the code and Git</text>
+
+  <!-- result -->
+  <rect x="970" y="420" width="270" height="120" rx="14" fill="#15200E"/>
+  <text x="990" y="450" font-size="11" font-weight="700" fill="#C9E39A" letter-spacing="1.5">IMPACT</text>
+  <text x="990" y="488" font-size="30" font-weight="900" fill="#99CB38">10+ h</text>
+  <text x="1120" y="488" font-size="30" font-weight="900" fill="#99CB38">+30%</text>
+  <text x="990" y="514" font-size="12" fill="#F4F7EE">saved per week</text>
+  <text x="1120" y="514" font-size="12" fill="#F4F7EE">productivity</text>
+
+  <text x="40" y="592" font-size="12" fill="#56634C">Project built in the Business Intelligence department of Universidad Tecmilenio (2025). No real data.</text>
+</svg>
