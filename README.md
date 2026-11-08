@@ -1,51 +1,51 @@
 # Qualtrics ETL Automation
 
-**Automatización que extrae encuestas de Qualtrics, las limpia y las deja listas para Power BI, sin trabajo manual.**
+**An automation that extracts Qualtrics surveys, cleans them and gets them ready for Power BI, with no manual work.**
 
-![Arquitectura del ETL](docs/arquitectura.png)
+![ETL architecture](docs/arquitectura.png)
 
-## El problema
+## The problem
 
-En el área de Business Intelligence de una universidad, las respuestas de las encuestas institucionales se descargaban a mano desde Qualtrics, se limpiaban en hojas de cálculo y se copiaban a la carpeta que alimentaba los tableros de Power BI. Esto tenía tres problemas:
+In a university's Business Intelligence department, survey responses were downloaded manually from Qualtrics, cleaned in spreadsheets and copied into the folder that fed the Power BI dashboards. This caused three problems:
 
-- **Más de 10 horas a la semana** de trabajo manual de extracción y limpieza.
-- **Varias versiones del mismo archivo** circulando, sin un estándar que garantizara la integridad de los datos.
-- Tableros que se actualizaban tarde porque dependían de que alguien hiciera la descarga.
+- **More than 10 hours per week** of manual extraction and cleaning.
+- **Multiple versions of the same file** in circulation, with no standard to guarantee data integrity.
+- Dashboards that updated late because they depended on someone doing the download.
 
-## La solución
+## The solution
 
-Un proceso ETL en Python, sin costo de licencias, que:
+A Python ETL process, with no licensing costs, that:
 
-1. **Extrae** las respuestas con la API REST de Qualtrics (exportación asíncrona: iniciar, consultar estado y descargar el ZIP).
-2. **Transforma** el CSV: quita las filas de metadatos de Qualtrics, filtra por periodo y conserva solo las columnas necesarias.
-3. **Carga** un CSV por encuesta en una carpeta de OneDrive, desde donde Power BI actualiza los tableros.
-4. Se **ejecuta solo** con el Programador de tareas de Windows, y cada encuesta se define en un archivo JSON, así que agregar una no requiere tocar el código.
+1. **Extracts** the responses through the Qualtrics REST API (asynchronous export: start, check status and download the ZIP).
+2. **Transforms** the CSV: removes the Qualtrics metadata rows, filters by period and keeps only the required columns.
+3. **Loads** one CSV per survey into a OneDrive folder, from which Power BI refreshes the dashboards.
+4. **Runs on its own** with Windows Task Scheduler. Each survey is defined in a JSON file, so adding a new one does not require changing the code.
 
-## Resultados
+## Results
 
-| Indicador | Resultado |
+| Metric | Result |
 | --- | --- |
-| Tiempo de extracción y limpieza | **+10 horas ahorradas por semana** |
-| Productividad del área en reportes de encuestas | **+30%** |
-| Costo de licencias | **$0** (Python, Task Scheduler y OneDrive) |
-| Tableros alimentados | Participación en encuesta institucional, encuesta de indagación y rediseño del tablero de eficiencia terminal y continuidad |
+| Extraction and cleaning time | **10+ hours saved per week** |
+| Team productivity on survey reporting | **+30%** |
+| Licensing cost | **$0** (Python, Task Scheduler and OneDrive) |
+| Dashboards fed | Institutional survey participation, inquiry survey and the redesign of a historical metrics dashboard |
 
-## Estructura
+## Structure
 
 ```
-etl_qualtrics.py          Script principal (extracción, transformación y carga)
-ejecutar_etl.bat          Ejecuta el ETL para cada encuesta; lo llama el Programador de tareas
-encuestas/                Una configuración .json por encuesta
-  ejemplos/               Plantillas de configuración
-.env.example              Plantilla de credenciales (el .env real nunca se sube a Git)
-tests/test_etl.py         Pruebas sin conexión con una API simulada
-ejemplos/                 CSV de salida de ejemplo (datos ficticios)
-docs/                     Diagrama de arquitectura y réplicas de los tableros
+etl_qualtrics.py          Main script (extraction, transformation and loading)
+ejecutar_etl.bat          Runs the ETL for each survey; called by Task Scheduler
+encuestas/                One .json configuration per survey
+  ejemplos/               Configuration templates
+.env.example              Credentials template (the real .env is never committed)
+tests/test_etl.py         Offline tests with a mocked API
+ejemplos/                 Sample output CSV (fictitious data)
+docs/                     Architecture diagram and dashboard replicas
 ```
 
-## Instalación
+## Installation
 
-Requisitos: Windows, Python 3.10 o superior y la carpeta de OneDrive sincronizada en el equipo.
+Requirements: Windows, Python 3.10 or later and the OneDrive folder synced on the computer.
 
 ```bash
 git clone https://github.com/AlanDelAngel/qualtrics-etl-automation.git
@@ -53,92 +53,92 @@ cd qualtrics-etl-automation
 pip install -r requirements.txt
 ```
 
-> Si el equipo tiene varias versiones de Python, usa `where python` en la terminal para saber cuál usar e instala las dependencias con esa misma.
+> If the computer has more than one Python version, run `where python` in the terminal to find the one to use, and install the dependencies with that same version.
 
-### 1. Credenciales
+### 1. Credentials
 
-Copia `.env.example` como `.env` y llena tus datos:
+Copy `.env.example` to `.env` and fill in your values:
 
 ```env
-QUALTRICS_API_TOKEN=tu_token
-QUALTRICS_DATA_CENTER=tu_data_center
+QUALTRICS_API_TOKEN=your_token
+QUALTRICS_DATA_CENTER=your_data_center
 ```
 
-El token está en Qualtrics, en **Configuración de la cuenta > Qualtrics IDs**. El data center es la primera parte de la URL de tu cuenta.
+The token is in Qualtrics under **Account Settings > Qualtrics IDs**. The data center is the first part of your account URL.
 
-### 2. Configurar una encuesta
+### 2. Configure a survey
 
-Copia una plantilla de `encuestas/ejemplos/` a `encuestas/` y edítala:
+Copy a template from `encuestas/ejemplos/` into `encuestas/` and edit it:
 
 ```json
 {
   "survey_id": "SV_XXXXXXXXXXXXXXX",
   "nombre_csv": "participacion",
-  "carpeta_salida": "C:\\Users\\TU_USUARIO\\OneDrive\\Datos\\Encuestas",
+  "carpeta_salida": "C:\\Users\\YOUR_USER\\OneDrive\\Data\\Surveys",
   "columna_periodo": "Periodo",
   "periodos": ["2025 Ene - May", "2025 Ago - Dic"],
   "columnas": ["ResponseId", "EndDate", "Periodo", "Campus", "Q1", "Q2"]
 }
 ```
 
-| Campo | Obligatorio | Descripción |
+| Field | Required | Description |
 | --- | --- | --- |
-| `survey_id` | Sí | ID de la encuesta en Qualtrics (empieza con `SV_`) |
-| `nombre_csv` | Sí | Nombre del archivo de salida; usa uno distinto por encuesta |
-| `carpeta_salida` | Sí | Carpeta local (por ejemplo, la de OneDrive que lee Power BI) |
-| `columna_periodo` | No | Columna usada para filtrar periodos (por defecto `Periodo`) |
-| `periodos` | No | Periodos a conservar, escritos igual que en Qualtrics. Lista vacía = todos |
-| `columnas` | No | IDs de columna a conservar. Lista vacía = todas |
-| `conservar_fila_preguntas` | No | `true` para mantener la fila con el texto de cada pregunta |
+| `survey_id` | Yes | Qualtrics survey ID (starts with `SV_`) |
+| `nombre_csv` | Yes | Output file name; use a different one for each survey |
+| `carpeta_salida` | Yes | Local folder (for example, the OneDrive folder that Power BI reads) |
+| `columna_periodo` | No | Column used to filter periods (defaults to `Periodo`) |
+| `periodos` | No | Periods to keep, written exactly as they appear in Qualtrics. Empty list = all |
+| `columnas` | No | Column IDs to keep. Empty list = all |
+| `conservar_fila_preguntas` | No | `true` to keep the row with each question's text |
 
-### 3. Ejecutar
+### 3. Run
 
 ```bash
 python etl_qualtrics.py --config encuestas/participacion.json
 ```
 
-O ejecuta `ejecutar_etl.bat`, que procesa todas las encuestas de la carpeta `encuestas/`. Cada ejecución queda registrada en `logs/etl.log`.
+Or run `ejecutar_etl.bat`, which processes every survey in the `encuestas/` folder. Each run is logged in `logs/etl.log`.
 
-### 4. Programar la ejecución automática
+### 4. Schedule automatic runs
 
-1. Presiona `Win + R`, escribe `taskschd.msc` y abre **Crear tarea básica**.
-2. Ponle un nombre único y elige la frecuencia (la tarea solo corre si el equipo está encendido).
-3. En **Acción**, elige **Iniciar un programa** y selecciona `ejecutar_etl.bat`.
-4. En la pestaña **Configuración**, activa *Permitir que la tarea se ejecute a petición*, *Ejecutar la tarea lo antes posible si no se ejecutó a la hora programada* y *Detener la tarea si se ejecuta durante más de 2 horas*.
-5. Verifica que OneDrive inicie con Windows para que los archivos se sincronicen.
+1. Press `Win + R`, type `taskschd.msc` and open **Create Basic Task**.
+2. Give it a unique name and choose the frequency (the task only runs while the computer is on).
+3. Under **Action**, choose **Start a program** and select `ejecutar_etl.bat`.
+4. In the **Settings** tab, enable *Allow task to be run on demand*, *Run task as soon as possible after a scheduled start is missed* and *Stop the task if it runs longer than 2 hours*.
+5. Make sure OneDrive starts with Windows so the files stay in sync.
 
-## Manejo de errores
+## Error handling
 
-El ETL se detiene con un mensaje claro, y **sin sobrescribir el CSV anterior**, cuando:
+The ETL stops with a clear message, and **without overwriting the previous CSV**, when:
 
-- faltan credenciales o la configuración tiene campos vacíos o un JSON inválido;
-- una columna de `columnas` o la `columna_periodo` no existe en la encuesta;
-- Qualtrics rechaza la solicitud, falla al generar el archivo o tarda más de 15 minutos.
+- credentials are missing, or the configuration has empty fields or invalid JSON;
+- a column in `columnas` or the `columna_periodo` does not exist in the survey;
+- Qualtrics rejects the request, fails to generate the file or takes longer than 15 minutes.
 
-Los filtros son sensibles a mayúsculas, espacios y acentos: los periodos y columnas deben escribirse exactamente como aparecen en Qualtrics. Si ningún registro coincide con los periodos, se genera un CSV vacío y queda una advertencia en el log.
+Filters are case, space and accent sensitive: periods and columns must be written exactly as they appear in Qualtrics. If no records match the periods, an empty CSV is generated and a warning is logged.
 
-## Pruebas
+## Tests
 
-Las pruebas simulan la API de Qualtrics con un ZIP de datos ficticios, así que no necesitan conexión ni credenciales:
+The tests mock the Qualtrics API with a ZIP of fictitious data, so they need no connection or credentials:
 
 ```bash
 pip install -r requirements-dev.txt
 pytest
 ```
 
-## Siguientes pasos
+## Next steps
 
-- Interfaz sencilla para que usuarios sin conocimientos de programación configuren y ejecuten extracciones.
-- Migrar los repositorios de encuestas a un Data Warehouse con flujos en la nube, como fuente única de la verdad.
+- A simple interface so users without programming knowledge can configure and run extractions.
+- Migrate the survey repositories to a Data Warehouse with cloud pipelines, as a single source of truth.
 
-## Autor
+## Author
 
-**Alan Adelfo Del Angel Figueroa**, desarrollado en el área de Business Intelligence de Universidad Tecmilenio (2025). Publicado con autorización, sin datos ni configuraciones de la institución.
+**Alan Adelfo Del Angel Figueroa**, built in the Business Intelligence department of Universidad Tecmilenio (2025). Published with permission, without any institutional data or configuration.
 
 [github.com/AlanDelAngel](https://github.com/AlanDelAngel)
 
 ---
 
-### English summary
+### Resumen en español
 
-Python ETL that exports survey responses from the Qualtrics REST API, removes Qualtrics metadata rows, filters by period and columns, and writes one CSV per survey to a OneDrive folder that feeds Power BI dashboards. It runs unattended through Windows Task Scheduler, keeps credentials in a local `.env`, defines each survey in a JSON file, logs every run and includes offline tests with a mocked API. In production it saved **10+ hours per week** of manual extraction and cleaning and increased the team's reporting productivity by **30%**, at no licensing cost.
+ETL en Python que exporta respuestas de encuestas desde la API REST de Qualtrics, quita las filas de metadatos, filtra por periodo y columnas, y genera un CSV por encuesta en una carpeta de OneDrive que alimenta tableros de Power BI. Se ejecuta solo con el Programador de tareas de Windows, guarda las credenciales en un `.env` local, define cada encuesta en un archivo JSON, registra cada ejecución e incluye pruebas sin conexión con una API simulada. En producción ahorró **más de 10 horas por semana** de extracción y limpieza manual y aumentó **30%** la productividad del equipo en reportes, sin costo de licencias.
