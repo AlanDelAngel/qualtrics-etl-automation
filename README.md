@@ -30,16 +30,6 @@ Un proceso ETL en Python, sin costo de licencias, que:
 | Costo de licencias | **$0** (Python, Task Scheduler y OneDrive) |
 | Tableros alimentados | Participación en encuesta institucional, encuesta de indagación y rediseño del tablero de eficiencia terminal y continuidad |
 
-## Tableros
-
-Réplicas de los tableros de Power BI que consumen este ETL. Mantienen el diseño original, pero **todos los datos, campus y cifras son ficticios**.
-
-| Participación por campus y periodo | Seguimiento diario |
-| --- | --- |
-| ![Tablero de participación](docs/tableros/tablero-participacion.jpg) | ![Tablero de indagación](docs/tableros/tablero-indagacion.jpg) |
-
-![Tablero de eficiencia terminal, permanencia y continuidad](docs/tableros/tablero-eficiencia.jpg)
-
 ## Estructura
 
 ```
