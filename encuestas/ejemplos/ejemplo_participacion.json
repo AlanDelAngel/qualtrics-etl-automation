@@ -1,0 +1,9 @@
+{
+  "survey_id": "SV_XXXXXXXXXXXXXXX",
+  "nombre_csv": "participacion",
+  "carpeta_salida": "C:\\Users\\TU_USUARIO\\OneDrive\\Datos\\Encuestas",
+  "columna_periodo": "Periodo",
+  "periodos": ["2025 Ene - May", "2025 Ago - Dic"],
+  "columnas": ["ResponseId", "EndDate", "Finished", "Periodo", "Campus", "Q1", "Q2", "Q3"],
+  "conservar_fila_preguntas": false
+}

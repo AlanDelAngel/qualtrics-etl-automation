@@ -1,0 +1,14 @@
+# Credenciales
+.env
+
+# Salidas del ETL
+*.csv
+!ejemplos/*.csv
+logs/
+*.tmp
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
